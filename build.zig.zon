@@ -11,8 +11,8 @@
     },
     .dependencies = .{
         .zwindows = .{
-            .url = "https://github.com/zig-gamedev/zwindows/archive/refs/tags/0.1.0.tar.gz",
-            .hash = "12204b949ad0c23067036fc99a642ea3adb5c58500c59645693c914183f8a306559d",
+            .url = "https://github.com/zig-gamedev/zwindows/archive/511794cb06f5f2b7a2be8346e7312f54d0adb820.tar.gz",
+            .hash = "12204948283efd34140a20dfdc36b2bcd57fc1d52e18d37ca7d5ef7077142d768d02",
         },
     },
 }
