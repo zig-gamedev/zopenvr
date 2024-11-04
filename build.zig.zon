@@ -1,0 +1,18 @@
+.{
+    .name = "zopenvr",
+    .version = "0.1.0-dev",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "libs",
+        "src",
+        "README.md",
+        "LICENSE",
+    },
+    .dependencies = .{
+        .zwindows = .{
+            .url = "https://github.com/zig-gamedev/zwindows/archive/refs/tags/0.1.0.tar.gz",
+            .hash = "122064d063ba4ba5b767f15879bda76813df85ec973b31460566fbe84c4385f2b387",
+        },
+    },
+}
