@@ -821,6 +821,7 @@ pub const ApplicationError = error{
     UnknownProperty,
     InvalidParameter,
     NotImplemented,
+    OutOfMemory,
 };
 pub const ApplicationErrorCode = enum(i32) {
     none = 0,
