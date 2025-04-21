@@ -1,7 +1,11 @@
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
-    const zwindows = b.dependency("zwindows", .{
+    const zopenvr = b.addModule("root", .{
+        .root_source_file = b.path("src/openvr.zig"),
+    });
+
+    if (b.lazyDependency("zwindows", .{
         .zxaudio2_debug_layer = b.option(
             bool,
             "zxaudio2_debug_layer",
@@ -17,13 +21,9 @@ pub fn build(b: *std.Build) void {
             "zd3d12_gbv",
             "Enable DirectX 12 GPU-Based Validation (GBV)",
         ) orelse false,
-    });
-    _ = b.addModule("root", .{
-        .root_source_file = b.path("src/openvr.zig"),
-        .imports = &.{
-            .{ .name = "zwindows", .module = zwindows.module("zwindows") },
-        },
-    });
+    })) |zwindows| {
+        zopenvr.addImport("zwindows", zwindows.module("zwindows"));
+    }
 }
 
 pub fn addLibraryPathsTo(zopenvr: *std.Build.Dependency, compile_step: *std.Build.Step.Compile) void {

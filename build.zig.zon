@@ -15,6 +15,7 @@
         .zwindows = .{
             .url = "git+https://github.com/zig-gamedev/zwindows#6c2200ed1f5e02d6b27d803d53e3743a2d1ea0b2",
             .hash = "zwindows-0.2.0-dev-xMZ1u6VcDACVsrJqnbgqNJQe3Tk8Lo0zpQ0ngKNwDj0a",
+            .lazy = true,
         },
     },
 }
