@@ -13,8 +13,8 @@
     },
     .dependencies = .{
         .zwindows = .{
-            .url = "git+https://github.com/zig-gamedev/zwindows#bd3ed2ae435df516e36d135fa2593f24abfa11ff",
-            .hash = "zwindows-0.2.0-dev-xMZ1u0hfDACEqal7Jao5Q0pe1Gw1--FVdiixhAklrZ46",
+            .url = "git+https://github.com/zig-gamedev/zwindows#c29e0fec072c282a8c6234c5837db071af42a11f",
+            .hash = "zwindows-0.2.0-dev-xMZ1u9hgDABY0PTdtNQlpi3Gi06AP1BEGunM7fC9Mijw",
             .lazy = true,
         },
     },
