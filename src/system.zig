@@ -1,36 +1,36 @@
 const std = @import("std");
 
-const common = @import("common.zig");
+const openvr = @import("openvr.zig");
 
 function_table: *FunctionTable,
 
 const Self = @This();
 
 const version = "IVRSystem_022";
-pub fn init() common.InitError!Self {
+pub fn init() openvr.InitError!Self {
     return .{
-        .function_table = try common.getFunctionTable(FunctionTable, version),
+        .function_table = try openvr.getFunctionTable(FunctionTable, version),
     };
 }
 
-pub fn getRecommendedRenderTargetSize(self: Self) common.RenderTargetSize {
-    var render_target_size: common.RenderTargetSize = .{ .width = 0, .height = 0 };
+pub fn getRecommendedRenderTargetSize(self: Self) openvr.RenderTargetSize {
+    var render_target_size: openvr.RenderTargetSize = .{ .width = 0, .height = 0 };
     self.function_table.GetRecommendedRenderTargetSize(&render_target_size.width, &render_target_size.height);
     return render_target_size;
 }
 
-pub fn getProjectionMatrix(self: Self, eye: common.Eye, near: f32, far: f32) common.Matrix44 {
+pub fn getProjectionMatrix(self: Self, eye: openvr.Eye, near: f32, far: f32) openvr.Matrix44 {
     return self.function_table.GetProjectionMatrix(eye, near, far);
 }
 
-pub fn getProjectionRaw(self: Self, eye: common.Eye) common.RawProjection {
-    var raw_projection: common.RawProjection = undefined;
+pub fn getProjectionRaw(self: Self, eye: openvr.Eye) openvr.RawProjection {
+    var raw_projection: openvr.RawProjection = undefined;
     self.function_table.GetProjectionRaw(eye, &raw_projection.left, &raw_projection.right, &raw_projection.top, &raw_projection.bottom);
     return raw_projection;
 }
 
-pub fn computeDistortion(self: Self, eye: common.Eye, u: f32, v: f32) ?common.DistortionCoordinates {
-    var distortion_coordinates: common.DistortionCoordinates = undefined;
+pub fn computeDistortion(self: Self, eye: openvr.Eye, u: f32, v: f32) ?openvr.DistortionCoordinates {
+    var distortion_coordinates: openvr.DistortionCoordinates = undefined;
     if (self.function_table.ComputeDistortion(eye, u, v, &distortion_coordinates)) {
         return distortion_coordinates;
     } else {
@@ -38,12 +38,12 @@ pub fn computeDistortion(self: Self, eye: common.Eye, u: f32, v: f32) ?common.Di
     }
 }
 
-pub fn getEyeToHeadTransform(self: Self, eye: common.Eye) common.Matrix34 {
+pub fn getEyeToHeadTransform(self: Self, eye: openvr.Eye) openvr.Matrix34 {
     return self.function_table.GetEyeToHeadTransform(eye);
 }
 
-pub fn getTimeSinceLastVsync(self: Self) ?common.VSyncTiming {
-    var timing: common.VSyncTiming = undefined;
+pub fn getTimeSinceLastVsync(self: Self) ?openvr.VSyncTiming {
+    var timing: openvr.VSyncTiming = undefined;
     if (self.function_table.GetTimeSinceLastVsync(&timing.seconds_since_last_vsync, &timing.frame_counter)) {
         return timing;
     } else {
@@ -66,8 +66,8 @@ pub fn setDisplayVisibility(self: Self, is_visible_on_desktop: bool) bool {
     return self.function_table.SetDisplayVisibility(is_visible_on_desktop);
 }
 
-pub fn allocDeviceToAbsoluteTrackingPose(self: Self, allocator: std.mem.Allocator, origin: common.TrackingUniverseOrigin, predicted_seconds_to_photons_from_now: f32, count: usize) ![]common.TrackedDevicePose {
-    const tracked_device_poses = try allocator.alloc(common.TrackedDevicePose, count);
+pub fn allocDeviceToAbsoluteTrackingPose(self: Self, allocator: std.mem.Allocator, origin: openvr.TrackingUniverseOrigin, predicted_seconds_to_photons_from_now: f32, count: usize) ![]openvr.TrackedDevicePose {
+    const tracked_device_poses = try allocator.alloc(openvr.TrackedDevicePose, count);
     if (count > 0) {
         self.function_table.GetDeviceToAbsoluteTrackingPose(origin, predicted_seconds_to_photons_from_now, tracked_device_poses.ptr, @intCast(tracked_device_poses.len));
     }
@@ -75,114 +75,114 @@ pub fn allocDeviceToAbsoluteTrackingPose(self: Self, allocator: std.mem.Allocato
     return tracked_device_poses;
 }
 
-pub fn getSeatedZeroPoseToStandingAbsoluteTrackingPose(self: Self) common.Matrix34 {
+pub fn getSeatedZeroPoseToStandingAbsoluteTrackingPose(self: Self) openvr.Matrix34 {
     return self.function_table.GetSeatedZeroPoseToStandingAbsoluteTrackingPose();
 }
-pub fn getRawZeroPoseToStandingAbsoluteTrackingPose(self: Self) common.Matrix34 {
+pub fn getRawZeroPoseToStandingAbsoluteTrackingPose(self: Self) openvr.Matrix34 {
     return self.function_table.GetRawZeroPoseToStandingAbsoluteTrackingPose();
 }
-pub fn getSortedTrackedDeviceIndicesOfClass(self: Self, tracked_device_class: common.TrackedDeviceClass, tracked_device_indices: []common.TrackedDeviceIndex, relative_to_tracked_device_index: common.TrackedDeviceIndex) u32 {
+pub fn getSortedTrackedDeviceIndicesOfClass(self: Self, tracked_device_class: openvr.TrackedDeviceClass, tracked_device_indices: []openvr.TrackedDeviceIndex, relative_to_tracked_device_index: openvr.TrackedDeviceIndex) u32 {
     return self.function_table.GetSortedTrackedDeviceIndicesOfClass(tracked_device_class, tracked_device_indices.ptr, @intCast(tracked_device_indices.len), relative_to_tracked_device_index);
 }
 
-pub fn getTrackedDeviceActivityLevel(self: Self, device_index: common.TrackedDeviceIndex) common.DeviceActivityLevel {
+pub fn getTrackedDeviceActivityLevel(self: Self, device_index: openvr.TrackedDeviceIndex) openvr.DeviceActivityLevel {
     return self.function_table.GetTrackedDeviceActivityLevel(device_index);
 }
 
-pub fn applyTransform(self: Self, tracked_device_pose: common.TrackedDevicePose, transform: common.Matrix34) common.TrackedDevicePose {
-    var result: common.TrackedDevicePose = undefined;
+pub fn applyTransform(self: Self, tracked_device_pose: openvr.TrackedDevicePose, transform: openvr.Matrix34) openvr.TrackedDevicePose {
+    var result: openvr.TrackedDevicePose = undefined;
     self.function_table.ApplyTransform(&result, @constCast(&tracked_device_pose), @constCast(&transform));
     return result;
 }
 
-pub fn getTrackedDeviceIndexForControllerRole(self: Self, device_type: common.TrackedControllerRole) common.TrackedDeviceIndex {
+pub fn getTrackedDeviceIndexForControllerRole(self: Self, device_type: openvr.TrackedControllerRole) openvr.TrackedDeviceIndex {
     return self.function_table.GetTrackedDeviceIndexForControllerRole(device_type);
 }
-pub fn getControllerRoleForTrackedDeviceIndex(self: Self, tracked_device_index: common.TrackedDeviceIndex) common.TrackedControllerRole {
+pub fn getControllerRoleForTrackedDeviceIndex(self: Self, tracked_device_index: openvr.TrackedDeviceIndex) openvr.TrackedControllerRole {
     return self.function_table.GetControllerRoleForTrackedDeviceIndex(tracked_device_index);
 }
 
-pub fn getTrackedDeviceClass(self: Self, device_index: common.TrackedDeviceIndex) common.TrackedDeviceClass {
+pub fn getTrackedDeviceClass(self: Self, device_index: openvr.TrackedDeviceIndex) openvr.TrackedDeviceClass {
     return self.function_table.GetTrackedDeviceClass(device_index);
 }
 
-pub fn isTrackedDeviceConnected(self: Self, device_index: common.TrackedDeviceIndex) bool {
+pub fn isTrackedDeviceConnected(self: Self, device_index: openvr.TrackedDeviceIndex) bool {
     return self.function_table.IsTrackedDeviceConnected(device_index);
 }
 
-pub fn getTrackedDeviceProperty(self: Self, comptime T: type, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.fromType(T)) common.TrackedPropertyError!T {
-    var property_error: common.TrackedPropertyErrorCode = undefined;
+pub fn getTrackedDeviceProperty(self: Self, comptime T: type, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.fromType(T)) openvr.TrackedPropertyError!T {
+    var property_error: openvr.TrackedPropertyErrorCode = undefined;
     const result = switch (T) {
         bool => self.function_table.GetBoolTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
         f32 => self.function_table.GetFloatTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
         i32 => self.function_table.GetInt32TrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
         u64 => self.function_table.GetUint64TrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
-        common.Matrix34 => self.function_table.GetMatrix34TrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
+        openvr.Matrix34 => self.function_table.GetMatrix34TrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), &property_error),
         else => @compileError("T must be bool, f32, i32, u64, Matrix34"),
     };
     try property_error.maybe();
     return result;
 }
 
-pub fn getTrackedDevicePropertyBool(self: Self, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Bool) common.TrackedPropertyError!bool {
+pub fn getTrackedDevicePropertyBool(self: Self, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Bool) openvr.TrackedPropertyError!bool {
     return self.getTrackedDeviceProperty(bool, device_index, property);
 }
 
-pub fn getTrackedDevicePropertyF32(self: Self, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.F32) common.TrackedPropertyError!f32 {
+pub fn getTrackedDevicePropertyF32(self: Self, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.F32) openvr.TrackedPropertyError!f32 {
     return self.getTrackedDeviceProperty(f32, device_index, property);
 }
 
-pub fn getTrackedDevicePropertyI32(self: Self, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.I32) common.TrackedPropertyError!i32 {
+pub fn getTrackedDevicePropertyI32(self: Self, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.I32) openvr.TrackedPropertyError!i32 {
     return self.getTrackedDeviceProperty(i32, device_index, property);
 }
 
-pub fn getTrackedDevicePropertyU64(self: Self, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.U64) common.TrackedPropertyError!u64 {
+pub fn getTrackedDevicePropertyU64(self: Self, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.U64) openvr.TrackedPropertyError!u64 {
     return self.getTrackedDeviceProperty(u64, device_index, property);
 }
 
-pub fn getTrackedDevicePropertyMatrix34(self: Self, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Matrix34) common.TrackedPropertyError!common.Matrix34 {
-    return self.getTrackedDeviceProperty(common.Matrix34, device_index, property);
+pub fn getTrackedDevicePropertyMatrix34(self: Self, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Matrix34) openvr.TrackedPropertyError!openvr.Matrix34 {
+    return self.getTrackedDeviceProperty(openvr.Matrix34, device_index, property);
 }
 
-pub fn allocTrackedDevicePropertyArray(self: Self, comptime T: type, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Array.fromType(T)) common.TrackedPropertyError![]T {
-    var property_error: common.TrackedPropertyErrorCode = undefined;
-    const buffer_length = self.function_table.GetArrayTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), common.PropertyTypeTagCode.fromType(T), null, 0, &property_error);
+pub fn allocTrackedDevicePropertyArray(self: Self, comptime T: type, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Array.fromType(T)) openvr.TrackedPropertyError![]T {
+    var property_error: openvr.TrackedPropertyErrorCode = undefined;
+    const buffer_length = self.function_table.GetArrayTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), openvr.PropertyTypeTagCode.fromType(T), null, 0, &property_error);
     property_error.maybe() catch |err| switch (err) {
-        common.TrackedPropertyError.BufferTooSmall => {},
+        openvr.TrackedPropertyError.BufferTooSmall => {},
         else => return err,
     };
     const buffer = try allocator.alloc(u8, buffer_length);
 
     if (buffer_length > 0) {
         property_error = undefined;
-        _ = self.function_table.GetArrayTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), common.PropertyTypeTagCode.fromType(T), @ptrCast(buffer.ptr), buffer_length, &property_error);
+        _ = self.function_table.GetArrayTrackedDeviceProperty(device_index, @enumFromInt(@intFromEnum(property)), openvr.PropertyTypeTagCode.fromType(T), @ptrCast(buffer.ptr), buffer_length, &property_error);
         try property_error.maybe();
     }
 
     return @alignCast(std.mem.bytesAsSlice(T, buffer));
 }
 
-pub fn allocTrackedDevicePropertyArrayF32(self: Self, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Array.F32) common.TrackedPropertyError![]f32 {
+pub fn allocTrackedDevicePropertyArrayF32(self: Self, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Array.F32) openvr.TrackedPropertyError![]f32 {
     return self.allocTrackedDevicePropertyArray(f32, allocator, device_index, property);
 }
 
-pub fn allocTrackedDevicePropertyArrayI32(self: Self, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Array.I32) common.TrackedPropertyError![]i32 {
+pub fn allocTrackedDevicePropertyArrayI32(self: Self, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Array.I32) openvr.TrackedPropertyError![]i32 {
     return self.allocTrackedDevicePropertyArray(i32, allocator, device_index, property);
 }
 
-pub fn allocTrackedDevicePropertyArrayVector4(self: Self, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Array.Vector4) common.TrackedPropertyError![]common.Vector4 {
-    return self.allocTrackedDevicePropertyArray(common.Vector4, allocator, device_index, property);
+pub fn allocTrackedDevicePropertyArrayVector4(self: Self, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Array.Vector4) openvr.TrackedPropertyError![]openvr.Vector4 {
+    return self.allocTrackedDevicePropertyArray(openvr.Vector4, allocator, device_index, property);
 }
 
-pub fn allocTrackedDevicePropertyArrayMatrix34(self: Self, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.Array.Matrix34) common.TrackedPropertyError![]common.Matrix34 {
-    return self.allocTrackedDevicePropertyArray(common.Matrix34, allocator, device_index, property);
+pub fn allocTrackedDevicePropertyArrayMatrix34(self: Self, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.Array.Matrix34) openvr.TrackedPropertyError![]openvr.Matrix34 {
+    return self.allocTrackedDevicePropertyArray(openvr.Matrix34, allocator, device_index, property);
 }
 
-pub fn allocTrackedDevicePropertyString(self: Self, allocator: std.mem.Allocator, device_index: common.TrackedDeviceIndex, property: common.TrackedDeviceProperty.String) common.TrackedPropertyError![:0]u8 {
-    var property_error: common.TrackedPropertyErrorCode = undefined;
+pub fn allocTrackedDevicePropertyString(self: Self, allocator: std.mem.Allocator, device_index: openvr.TrackedDeviceIndex, property: openvr.TrackedDeviceProperty.String) openvr.TrackedPropertyError![:0]u8 {
+    var property_error: openvr.TrackedPropertyErrorCode = undefined;
     const buffer_length = self.function_table.GetStringTrackedDeviceProperty(device_index, property, null, 0, &property_error);
     property_error.maybe() catch |err| switch (err) {
-        common.TrackedPropertyError.BufferTooSmall => {},
+        openvr.TrackedPropertyError.BufferTooSmall => {},
         else => return err,
     };
     if (buffer_length == 0) {
@@ -198,23 +198,23 @@ pub fn allocTrackedDevicePropertyString(self: Self, allocator: std.mem.Allocator
     return buffer;
 }
 
-pub fn getPropErrorNameFromEnum(self: Self, property_error: common.TrackedPropertyErrorCode) [:0]const u8 {
+pub fn getPropErrorNameFromEnum(self: Self, property_error: openvr.TrackedPropertyErrorCode) [:0]const u8 {
     return std.mem.span(self.function_table.GetPropErrorNameFromEnum(property_error));
 }
 
-pub fn pollNextEvent(self: Self) ?common.Event {
-    var event: common.Event = undefined;
-    if (self.function_table.PollNextEvent(&event, @sizeOf(common.Event))) {
+pub fn pollNextEvent(self: Self) ?openvr.Event {
+    var event: openvr.Event = undefined;
+    if (self.function_table.PollNextEvent(&event, @sizeOf(openvr.Event))) {
         return event;
     } else {
         return null;
     }
 }
 
-pub fn pollNextEventWithPose(self: Self, origin: common.TrackingUniverseOrigin) ?common.EventWithPose {
-    var event: common.Event = undefined;
-    var pose: common.TrackedDevicePose = undefined;
-    if (self.function_table.PollNextEventWithPose(origin, &event, @sizeOf(common.Event), &pose)) {
+pub fn pollNextEventWithPose(self: Self, origin: openvr.TrackingUniverseOrigin) ?openvr.EventWithPose {
+    var event: openvr.Event = undefined;
+    var pose: openvr.TrackedDevicePose = undefined;
+    if (self.function_table.PollNextEventWithPose(origin, &event, @sizeOf(openvr.Event), &pose)) {
         return .{
             .event = event,
             .pose = pose,
@@ -224,11 +224,11 @@ pub fn pollNextEventWithPose(self: Self, origin: common.TrackingUniverseOrigin) 
     }
 }
 
-pub fn getEventTypeNameFromEnum(self: Self, event_type: common.EventType) [:0]const u8 {
+pub fn getEventTypeNameFromEnum(self: Self, event_type: openvr.EventType) [:0]const u8 {
     return std.mem.span(self.function_table.GetEventTypeNameFromEnum(event_type));
 }
 
-pub fn getHiddenAreaMesh(self: Self, eye: common.Eye, mesh_type: common.HiddenAreaMeshType) []const common.Vector2 {
+pub fn getHiddenAreaMesh(self: Self, eye: openvr.Eye, mesh_type: openvr.HiddenAreaMeshType) []const openvr.Vector2 {
     const mesh = self.function_table.GetHiddenAreaMesh(eye, mesh_type);
     return if (mesh.triangle_count == 0)
         &.{}
@@ -236,23 +236,23 @@ pub fn getHiddenAreaMesh(self: Self, eye: common.Eye, mesh_type: common.HiddenAr
         mesh.vertex_data[0..mesh.triangle_count];
 }
 
-pub fn triggerHapticPulse(self: Self, device_index: common.TrackedDeviceIndex, axis_id: u32, duration_microseconds: u16) void {
+pub fn triggerHapticPulse(self: Self, device_index: openvr.TrackedDeviceIndex, axis_id: u32, duration_microseconds: u16) void {
     self.function_table.TriggerHapticPulse(device_index, axis_id, duration_microseconds);
 }
 
-pub fn getControllerState(self: Self, device_index: common.TrackedDeviceIndex) ?common.ControllerState {
-    var controller_state: common.ControllerState = undefined;
-    if (self.function_table.GetControllerState(device_index, &controller_state, @sizeOf(common.ControllerState))) {
+pub fn getControllerState(self: Self, device_index: openvr.TrackedDeviceIndex) ?openvr.ControllerState {
+    var controller_state: openvr.ControllerState = undefined;
+    if (self.function_table.GetControllerState(device_index, &controller_state, @sizeOf(openvr.ControllerState))) {
         return controller_state;
     } else {
         return null;
     }
 }
 
-pub fn getControllerStateWithPose(self: Self, origin: common.TrackingUniverseOrigin, device_index: common.TrackedDeviceIndex) ?common.ControllerStateWithPose {
-    var controller_state: common.ControllerState = undefined;
-    var pose: common.TrackedDevicePose = undefined;
-    if (self.function_table.GetControllerStateWithPose(origin, device_index, &controller_state, @sizeOf(common.ControllerState), &pose)) {
+pub fn getControllerStateWithPose(self: Self, origin: openvr.TrackingUniverseOrigin, device_index: openvr.TrackedDeviceIndex) ?openvr.ControllerStateWithPose {
+    var controller_state: openvr.ControllerState = undefined;
+    var pose: openvr.TrackedDevicePose = undefined;
+    if (self.function_table.GetControllerStateWithPose(origin, device_index, &controller_state, @sizeOf(openvr.ControllerState), &pose)) {
         return .{
             .controller_state = controller_state,
             .pose = pose,
@@ -261,10 +261,10 @@ pub fn getControllerStateWithPose(self: Self, origin: common.TrackingUniverseOri
         return null;
     }
 }
-pub fn getButtonIdNameFromEnum(self: Self, button_id: common.ButtonId) [:0]const u8 {
+pub fn getButtonIdNameFromEnum(self: Self, button_id: openvr.ButtonId) [:0]const u8 {
     return std.mem.span(self.function_table.GetButtonIdNameFromEnum(button_id));
 }
-pub fn getControllerAxisTypeNameFromEnum(self: Self, axis_type: common.ControllerAxisType) [:0]const u8 {
+pub fn getControllerAxisTypeNameFromEnum(self: Self, axis_type: openvr.ControllerAxisType) [:0]const u8 {
     return std.mem.span(self.function_table.GetControllerAxisTypeNameFromEnum(axis_type));
 }
 pub fn isInputAvailable(self: Self) bool {
@@ -279,7 +279,7 @@ pub fn shouldApplicationPause(self: Self) bool {
 pub fn shouldApplicationReduceRenderingWork(self: Self) bool {
     return self.function_table.ShouldApplicationReduceRenderingWork();
 }
-pub fn performFirmwareUpdate(self: Self, device_index: common.TrackedDeviceIndex) common.FirmwareError!void {
+pub fn performFirmwareUpdate(self: Self, device_index: openvr.TrackedDeviceIndex) openvr.FirmwareError!void {
     const firmware_error = self.function_table.PerformFirmwareUpdate(device_index);
     try firmware_error.maybe();
 }
@@ -287,7 +287,7 @@ pub fn acknowledgeQuitExiting(self: Self) void {
     self.function_table.AcknowledgeQuit_Exiting();
 }
 
-pub fn allocAppContainerFilePaths(self: Self, allocator: std.mem.Allocator) !common.FilePaths {
+pub fn allocAppContainerFilePaths(self: Self, allocator: std.mem.Allocator) !openvr.FilePaths {
     const buffer_length = self.function_table.GetAppContainerFilePaths(null, 0);
     if (buffer_length == 0) {
         return .{ .buffer = try allocator.allocSentinel(u8, 0, 0) };
@@ -306,10 +306,10 @@ pub fn getRuntimeVersion(self: Self) [:0]const u8 {
 
 const FunctionTable = extern struct {
     GetRecommendedRenderTargetSize: *const fn (*u32, *u32) callconv(.C) void,
-    GetProjectionMatrix: *const fn (common.Eye, f32, f32) callconv(.C) common.Matrix44,
-    GetProjectionRaw: *const fn (common.Eye, *f32, *f32, *f32, *f32) callconv(.C) void,
-    ComputeDistortion: *const fn (common.Eye, f32, f32, *common.DistortionCoordinates) callconv(.C) bool,
-    GetEyeToHeadTransform: *const fn (common.Eye) callconv(.C) common.Matrix34,
+    GetProjectionMatrix: *const fn (openvr.Eye, f32, f32) callconv(.C) openvr.Matrix44,
+    GetProjectionRaw: *const fn (openvr.Eye, *f32, *f32, *f32, *f32) callconv(.C) void,
+    ComputeDistortion: *const fn (openvr.Eye, f32, f32, *openvr.DistortionCoordinates) callconv(.C) bool,
+    GetEyeToHeadTransform: *const fn (openvr.Eye) callconv(.C) openvr.Matrix34,
     GetTimeSinceLastVsync: *const fn (*f32, *u64) callconv(.C) bool,
     GetD3D9AdapterIndex: *const fn () callconv(.C) i32,
     GetDXGIOutputInfo: *const fn (*i32) callconv(.C) void,
@@ -319,38 +319,38 @@ const FunctionTable = extern struct {
 
     IsDisplayOnDesktop: *const fn () callconv(.C) bool,
     SetDisplayVisibility: *const fn (bool) callconv(.C) bool,
-    GetDeviceToAbsoluteTrackingPose: *const fn (common.TrackingUniverseOrigin, f32, [*c]common.TrackedDevicePose, u32) callconv(.C) void,
-    GetSeatedZeroPoseToStandingAbsoluteTrackingPose: *const fn () callconv(.C) common.Matrix34,
-    GetRawZeroPoseToStandingAbsoluteTrackingPose: *const fn () callconv(.C) common.Matrix34,
-    GetSortedTrackedDeviceIndicesOfClass: *const fn (common.TrackedDeviceClass, [*c]common.TrackedDeviceIndex, u32, common.TrackedDeviceIndex) callconv(.C) u32,
-    GetTrackedDeviceActivityLevel: *const fn (common.TrackedDeviceIndex) callconv(.C) common.DeviceActivityLevel,
-    ApplyTransform: *const fn (*common.TrackedDevicePose, *common.TrackedDevicePose, *common.Matrix34) callconv(.C) void,
-    GetTrackedDeviceIndexForControllerRole: *const fn (common.TrackedControllerRole) callconv(.C) common.TrackedDeviceIndex,
-    GetControllerRoleForTrackedDeviceIndex: *const fn (common.TrackedDeviceIndex) callconv(.C) common.TrackedControllerRole,
-    GetTrackedDeviceClass: *const fn (common.TrackedDeviceIndex) callconv(.C) common.TrackedDeviceClass,
-    IsTrackedDeviceConnected: *const fn (common.TrackedDeviceIndex) callconv(.C) bool,
-    GetBoolTrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, *common.TrackedPropertyErrorCode) callconv(.C) bool,
-    GetFloatTrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, *common.TrackedPropertyErrorCode) callconv(.C) f32,
-    GetInt32TrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, *common.TrackedPropertyErrorCode) callconv(.C) i32,
-    GetUint64TrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, *common.TrackedPropertyErrorCode) callconv(.C) u64,
-    GetMatrix34TrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, *common.TrackedPropertyErrorCode) callconv(.C) common.Matrix34,
-    GetArrayTrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty, common.PropertyTypeTagCode, ?*anyopaque, u32, *common.TrackedPropertyErrorCode) callconv(.C) u32,
-    GetStringTrackedDeviceProperty: *const fn (common.TrackedDeviceIndex, common.TrackedDeviceProperty.String, [*c]u8, u32, *common.TrackedPropertyErrorCode) callconv(.C) u32,
-    GetPropErrorNameFromEnum: *const fn (common.TrackedPropertyErrorCode) callconv(.C) [*c]u8,
-    PollNextEvent: *const fn (*common.Event, u32) callconv(.C) bool,
-    PollNextEventWithPose: *const fn (common.TrackingUniverseOrigin, *common.Event, u32, *common.TrackedDevicePose) callconv(.C) bool,
-    GetEventTypeNameFromEnum: *const fn (common.EventType) callconv(.C) [*c]u8,
-    GetHiddenAreaMesh: *const fn (common.Eye, common.HiddenAreaMeshType) callconv(.C) common.HiddenAreaMesh,
-    GetControllerState: *const fn (common.TrackedDeviceIndex, *common.ControllerState, u32) callconv(.C) bool,
-    GetControllerStateWithPose: *const fn (common.TrackingUniverseOrigin, common.TrackedDeviceIndex, *common.ControllerState, u32, *common.TrackedDevicePose) callconv(.C) bool,
-    TriggerHapticPulse: *const fn (common.TrackedDeviceIndex, u32, c_ushort) callconv(.C) void,
-    GetButtonIdNameFromEnum: *const fn (common.ButtonId) callconv(.C) [*c]u8,
-    GetControllerAxisTypeNameFromEnum: *const fn (common.ControllerAxisType) callconv(.C) [*c]u8,
+    GetDeviceToAbsoluteTrackingPose: *const fn (openvr.TrackingUniverseOrigin, f32, [*c]openvr.TrackedDevicePose, u32) callconv(.C) void,
+    GetSeatedZeroPoseToStandingAbsoluteTrackingPose: *const fn () callconv(.C) openvr.Matrix34,
+    GetRawZeroPoseToStandingAbsoluteTrackingPose: *const fn () callconv(.C) openvr.Matrix34,
+    GetSortedTrackedDeviceIndicesOfClass: *const fn (openvr.TrackedDeviceClass, [*c]openvr.TrackedDeviceIndex, u32, openvr.TrackedDeviceIndex) callconv(.C) u32,
+    GetTrackedDeviceActivityLevel: *const fn (openvr.TrackedDeviceIndex) callconv(.C) openvr.DeviceActivityLevel,
+    ApplyTransform: *const fn (*openvr.TrackedDevicePose, *openvr.TrackedDevicePose, *openvr.Matrix34) callconv(.C) void,
+    GetTrackedDeviceIndexForControllerRole: *const fn (openvr.TrackedControllerRole) callconv(.C) openvr.TrackedDeviceIndex,
+    GetControllerRoleForTrackedDeviceIndex: *const fn (openvr.TrackedDeviceIndex) callconv(.C) openvr.TrackedControllerRole,
+    GetTrackedDeviceClass: *const fn (openvr.TrackedDeviceIndex) callconv(.C) openvr.TrackedDeviceClass,
+    IsTrackedDeviceConnected: *const fn (openvr.TrackedDeviceIndex) callconv(.C) bool,
+    GetBoolTrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, *openvr.TrackedPropertyErrorCode) callconv(.C) bool,
+    GetFloatTrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, *openvr.TrackedPropertyErrorCode) callconv(.C) f32,
+    GetInt32TrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, *openvr.TrackedPropertyErrorCode) callconv(.C) i32,
+    GetUint64TrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, *openvr.TrackedPropertyErrorCode) callconv(.C) u64,
+    GetMatrix34TrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, *openvr.TrackedPropertyErrorCode) callconv(.C) openvr.Matrix34,
+    GetArrayTrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty, openvr.PropertyTypeTagCode, ?*anyopaque, u32, *openvr.TrackedPropertyErrorCode) callconv(.C) u32,
+    GetStringTrackedDeviceProperty: *const fn (openvr.TrackedDeviceIndex, openvr.TrackedDeviceProperty.String, [*c]u8, u32, *openvr.TrackedPropertyErrorCode) callconv(.C) u32,
+    GetPropErrorNameFromEnum: *const fn (openvr.TrackedPropertyErrorCode) callconv(.C) [*c]u8,
+    PollNextEvent: *const fn (*openvr.Event, u32) callconv(.C) bool,
+    PollNextEventWithPose: *const fn (openvr.TrackingUniverseOrigin, *openvr.Event, u32, *openvr.TrackedDevicePose) callconv(.C) bool,
+    GetEventTypeNameFromEnum: *const fn (openvr.EventType) callconv(.C) [*c]u8,
+    GetHiddenAreaMesh: *const fn (openvr.Eye, openvr.HiddenAreaMeshType) callconv(.C) openvr.HiddenAreaMesh,
+    GetControllerState: *const fn (openvr.TrackedDeviceIndex, *openvr.ControllerState, u32) callconv(.C) bool,
+    GetControllerStateWithPose: *const fn (openvr.TrackingUniverseOrigin, openvr.TrackedDeviceIndex, *openvr.ControllerState, u32, *openvr.TrackedDevicePose) callconv(.C) bool,
+    TriggerHapticPulse: *const fn (openvr.TrackedDeviceIndex, u32, c_ushort) callconv(.C) void,
+    GetButtonIdNameFromEnum: *const fn (openvr.ButtonId) callconv(.C) [*c]u8,
+    GetControllerAxisTypeNameFromEnum: *const fn (openvr.ControllerAxisType) callconv(.C) [*c]u8,
     IsInputAvailable: *const fn () callconv(.C) bool,
     IsSteamVRDrawingControllers: *const fn () callconv(.C) bool,
     ShouldApplicationPause: *const fn () callconv(.C) bool,
     ShouldApplicationReduceRenderingWork: *const fn () callconv(.C) bool,
-    PerformFirmwareUpdate: *const fn (common.TrackedDeviceIndex) callconv(.C) common.FirmwareErrorCode,
+    PerformFirmwareUpdate: *const fn (openvr.TrackedDeviceIndex) callconv(.C) openvr.FirmwareErrorCode,
     AcknowledgeQuit_Exiting: *const fn () callconv(.C) void,
     GetAppContainerFilePaths: *const fn ([*c]u8, u32) callconv(.C) u32,
     GetRuntimeVersion: *const fn () callconv(.C) [*c]u8,
