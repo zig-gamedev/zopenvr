@@ -30,18 +30,18 @@ pub const ApplicationType = enum(i32) {
     room_view = 13,
     max = 14,
 };
-extern fn VR_InitInternal(*InitErrorCode, ApplicationType) callconv(.C) *isize;
+extern fn VR_InitInternal(*InitErrorCode, ApplicationType) callconv(.c) *isize;
 
 pub fn deinit(_: Self) void {
     VR_ShutdownInternal();
 }
-extern fn VR_ShutdownInternal() callconv(.C) void;
+extern fn VR_ShutdownInternal() callconv(.c) void;
 
 pub const isHmdPresent = VR_IsHmdPresent;
-extern fn VR_IsHmdPresent() callconv(.C) bool;
+extern fn VR_IsHmdPresent() callconv(.c) bool;
 
 pub const isRuntimeInstalled = VR_IsRuntimeInstalled;
-extern fn VR_IsRuntimeInstalled() callconv(.C) bool;
+extern fn VR_IsRuntimeInstalled() callconv(.c) bool;
 
 pub fn system(_: Self) InitError!System {
     return try System.init();
@@ -742,8 +742,8 @@ pub const InitErrorCode = enum(i32) {
     }
 };
 
-extern fn VR_GetVRInitErrorAsSymbol(InitErrorCode) callconv(.C) [*c]u8;
-extern fn VR_GetVRInitErrorAsEnglishDescription(InitErrorCode) callconv(.C) [*c]u8;
+extern fn VR_GetVRInitErrorAsSymbol(InitErrorCode) callconv(.c) [*c]u8;
+extern fn VR_GetVRInitErrorAsEnglishDescription(InitErrorCode) callconv(.c) [*c]u8;
 
 test "init error have english descriptions" {
     try std.testing.expectEqualStrings("No Error (0)", InitErrorCode.none.asEnglishDescription());
@@ -758,7 +758,7 @@ pub fn getFunctionTable(comptime T: type, comptime version: []const u8) InitErro
     return function_table;
 }
 
-extern fn VR_GetGenericInterface([*c]const u8, *InitErrorCode) callconv(.C) *isize;
+extern fn VR_GetGenericInterface([*c]const u8, *InitErrorCode) callconv(.c) *isize;
 
 pub const Quad = extern struct {
     corners: [4]Vector3,

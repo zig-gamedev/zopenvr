@@ -63,13 +63,13 @@ pub fn resetZeroPose(self: Self, origin: openvr.TrackingUniverseOrigin) void {
 }
 
 const FunctionTable = extern struct {
-    GetCalibrationState: *const fn () callconv(.C) openvr.CalibrationState,
-    GetPlayAreaSize: *const fn (*f32, *f32) callconv(.C) bool,
-    GetPlayAreaRect: *const fn (*openvr.Quad) callconv(.C) bool,
-    ReloadInfo: *const fn () callconv(.C) void,
-    SetSceneColor: *const fn (openvr.Color) callconv(.C) void,
-    GetBoundsColor: *const fn ([*c]openvr.Color, c_int, f32, *openvr.Color) callconv(.C) void,
-    AreBoundsVisible: *const fn () callconv(.C) bool,
-    ForceBoundsVisible: *const fn (bool) callconv(.C) void,
-    ResetZeroPose: *const fn (openvr.TrackingUniverseOrigin) callconv(.C) void,
+    GetCalibrationState: *const fn () callconv(.c) openvr.CalibrationState,
+    GetPlayAreaSize: *const fn (*f32, *f32) callconv(.c) bool,
+    GetPlayAreaRect: *const fn (*openvr.Quad) callconv(.c) bool,
+    ReloadInfo: *const fn () callconv(.c) void,
+    SetSceneColor: *const fn (openvr.Color) callconv(.c) void,
+    GetBoundsColor: *const fn ([*c]openvr.Color, c_int, f32, *openvr.Color) callconv(.c) void,
+    AreBoundsVisible: *const fn () callconv(.c) bool,
+    ForceBoundsVisible: *const fn (bool) callconv(.c) void,
+    ResetZeroPose: *const fn (openvr.TrackingUniverseOrigin) callconv(.c) void,
 };

@@ -166,29 +166,29 @@ pub fn getRenderModelErrorNameFromEnum(self: Self, error_code: openvr.RenderMode
 }
 
 const FunctionTable = extern struct {
-    LoadRenderModel_Async: *const fn ([*c]u8, **openvr.ExternRenderModel) callconv(.C) openvr.RenderModelErrorCode,
-    FreeRenderModel: *const fn (*openvr.ExternRenderModel) callconv(.C) void,
-    LoadTexture_Async: *const fn (openvr.TextureID, **openvr.RenderModel.TextureMap) callconv(.C) openvr.RenderModelErrorCode,
-    FreeTexture: *const fn (*openvr.RenderModel.TextureMap) callconv(.C) void,
+    LoadRenderModel_Async: *const fn ([*c]u8, **openvr.ExternRenderModel) callconv(.c) openvr.RenderModelErrorCode,
+    FreeRenderModel: *const fn (*openvr.ExternRenderModel) callconv(.c) void,
+    LoadTexture_Async: *const fn (openvr.TextureID, **openvr.RenderModel.TextureMap) callconv(.c) openvr.RenderModelErrorCode,
+    FreeTexture: *const fn (*openvr.RenderModel.TextureMap) callconv(.c) void,
 
     // skip d3d11
-    LoadTextureD3D11_Async: *const fn (openvr.TextureID, ?*anyopaque, [*c]?*anyopaque) callconv(.C) openvr.RenderModelErrorCode,
-    LoadIntoTextureD3D11_Async: *const fn (openvr.TextureID, ?*anyopaque) callconv(.C) openvr.RenderModelErrorCode,
-    FreeTextureD3D11: *const fn (?*anyopaque) callconv(.C) void,
+    LoadTextureD3D11_Async: *const fn (openvr.TextureID, ?*anyopaque, [*c]?*anyopaque) callconv(.c) openvr.RenderModelErrorCode,
+    LoadIntoTextureD3D11_Async: *const fn (openvr.TextureID, ?*anyopaque) callconv(.c) openvr.RenderModelErrorCode,
+    FreeTextureD3D11: *const fn (?*anyopaque) callconv(.c) void,
 
-    GetRenderModelName: *const fn (u32, [*c]u8, u32) callconv(.C) u32,
-    GetRenderModelCount: *const fn () callconv(.C) u32,
-    GetComponentCount: *const fn ([*c]u8) callconv(.C) u32,
-    GetComponentName: *const fn ([*c]u8, u32, [*c]u8, u32) callconv(.C) u32,
-    GetComponentButtonMask: *const fn ([*c]u8, [*c]u8) callconv(.C) u64,
-    GetComponentRenderModelName: *const fn ([*c]u8, [*c]u8, [*c]u8, u32) callconv(.C) u32,
-    GetComponentStateForDevicePath: *const fn ([*c]u8, [*c]u8, openvr.InputValueHandle, *openvr.RenderModel.ControllerModeState, *openvr.RenderModel.ComponentState) callconv(.C) bool,
+    GetRenderModelName: *const fn (u32, [*c]u8, u32) callconv(.c) u32,
+    GetRenderModelCount: *const fn () callconv(.c) u32,
+    GetComponentCount: *const fn ([*c]u8) callconv(.c) u32,
+    GetComponentName: *const fn ([*c]u8, u32, [*c]u8, u32) callconv(.c) u32,
+    GetComponentButtonMask: *const fn ([*c]u8, [*c]u8) callconv(.c) u64,
+    GetComponentRenderModelName: *const fn ([*c]u8, [*c]u8, [*c]u8, u32) callconv(.c) u32,
+    GetComponentStateForDevicePath: *const fn ([*c]u8, [*c]u8, openvr.InputValueHandle, *openvr.RenderModel.ControllerModeState, *openvr.RenderModel.ComponentState) callconv(.c) bool,
 
     // deprecated
-    GetComponentState: *const fn ([*c]u8, [*c]u8, [*c]openvr.ControllerState, [*c]openvr.RenderModel.ControllerModeState, [*c]openvr.RenderModel.ComponentState) callconv(.C) bool,
+    GetComponentState: *const fn ([*c]u8, [*c]u8, [*c]openvr.ControllerState, [*c]openvr.RenderModel.ControllerModeState, [*c]openvr.RenderModel.ComponentState) callconv(.c) bool,
 
-    RenderModelHasComponent: *const fn ([*c]u8, [*c]u8) callconv(.C) bool,
-    GetRenderModelThumbnailURL: *const fn ([*c]u8, [*c]u8, u32, [*c]openvr.RenderModelErrorCode) callconv(.C) u32,
-    GetRenderModelOriginalPath: *const fn ([*c]u8, [*c]u8, u32, [*c]openvr.RenderModelErrorCode) callconv(.C) u32,
-    GetRenderModelErrorNameFromEnum: *const fn (openvr.RenderModelErrorCode) callconv(.C) [*c]u8,
+    RenderModelHasComponent: *const fn ([*c]u8, [*c]u8) callconv(.c) bool,
+    GetRenderModelThumbnailURL: *const fn ([*c]u8, [*c]u8, u32, [*c]openvr.RenderModelErrorCode) callconv(.c) u32,
+    GetRenderModelOriginalPath: *const fn ([*c]u8, [*c]u8, u32, [*c]openvr.RenderModelErrorCode) callconv(.c) u32,
+    GetRenderModelErrorNameFromEnum: *const fn (openvr.RenderModelErrorCode) callconv(.c) [*c]u8,
 };
