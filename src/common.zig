@@ -1,8 +1,5 @@
 const std = @import("std");
 
-const zwindows = @import("zwindows");
-const d3d12 = zwindows.d3d12;
-
 const root = @This();
 
 pub const InitError = error{
@@ -1105,9 +1102,12 @@ pub const ColorSpace = enum(i32) {
     linear = 2,
 };
 pub const D3D12TextureData = extern struct {
-    resource: *d3d12.IResource,
-    command_queue: *d3d12.ICommandQueue,
+    resource: *ID3D12Resource,
+    command_queue: *ID3D12CommandQueue,
     node_mask: u32,
+
+    pub const ID3D12Resource = opaque {};
+    pub const ID3D12CommandQueue = opaque {};
 };
 pub const Texture = extern struct {
     handle: *const anyopaque,

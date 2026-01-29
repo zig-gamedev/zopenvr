@@ -8,29 +8,9 @@ pub fn build(b: *std.Build) !void {
         try checkGitLfsContent();
     };
 
-    const zopenvr = b.addModule("root", .{
+    _ = b.addModule("root", .{
         .root_source_file = b.path("src/openvr.zig"),
     });
-
-    if (b.lazyDependency("zwindows", .{
-        .zxaudio2_debug_layer = b.option(
-            bool,
-            "zxaudio2_debug_layer",
-            "Enable XAudio2 debug layer",
-        ) orelse false,
-        .zd3d12_debug_layer = b.option(
-            bool,
-            "zd3d12_debug_layer",
-            "Enable DirectX 12 debug layer",
-        ) orelse false,
-        .zd3d12_gbv = b.option(
-            bool,
-            "zd3d12_gbv",
-            "Enable DirectX 12 GPU-Based Validation (GBV)",
-        ) orelse false,
-    })) |zwindows| {
-        zopenvr.addImport("zwindows", zwindows.module("zwindows"));
-    }
 }
 
 pub fn addLibraryPathsTo(zopenvr: *std.Build.Dependency, compile_step: *std.Build.Step.Compile) void {
