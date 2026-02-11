@@ -368,7 +368,7 @@ pub fn getOriginTrackedDeviceInfo(
     const error_code = self.function_table.GetOriginTrackedDeviceInfo(
         origin,
         &result,
-        @sizeOf(openvr.InputValueHandle),
+        @sizeOf(openvr.InputOriginInfo),
     );
     try error_code.maybe();
 
