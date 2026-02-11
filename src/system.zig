@@ -233,7 +233,7 @@ pub fn getHiddenAreaMesh(self: Self, eye: openvr.Eye, mesh_type: openvr.HiddenAr
     return if (mesh.triangle_count == 0)
         &.{}
     else
-        mesh.vertex_data[0..mesh.triangle_count];
+        mesh.vertex_data[0..mesh.triangle_count * 3];
 }
 
 pub fn triggerHapticPulse(self: Self, device_index: openvr.TrackedDeviceIndex, axis_id: u32, duration_microseconds: u16) void {
