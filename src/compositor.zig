@@ -71,7 +71,7 @@ pub fn submit(self: Self, eye: openvr.Eye, texture: *const openvr.Texture, textu
 }
 
 pub fn submitWithArrayIndex(self: Self, eye: openvr.Eye, textures: [*]openvr.Texture, index: u32, texture_bounds: ?openvr.TextureBounds, flags: openvr.SubmitFlags) openvr.CompositorError!void {
-    const compositor_error = self.function_table.SubmitWithArrayIndex(eye, textures, index, texture_bounds, flags);
+    const compositor_error = self.function_table.SubmitWithArrayIndex(eye, textures, index, if (texture_bounds) |tb| &tb else null, flags);
     try compositor_error.maybe();
 }
 
