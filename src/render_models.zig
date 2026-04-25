@@ -12,8 +12,8 @@ pub fn init() openvr.InitError!Self {
     };
 }
 
-pub fn loadRenderModel(self: Self, render_model_name: [:0]const u8) openvr.RenderModelError!openvr.RenderModel {
-    while (true) : (std.Thread.sleep(10_000_000)) {
+pub fn loadRenderModel(self: Self, io: std.Io, render_model_name: [:0]const u8) openvr.RenderModelError!openvr.RenderModel {
+    while (true) : (std.Io.sleep(io, .fromNanoseconds(10_000_000), .awake)) {
         return self.loadRenderModelAsync(render_model_name) catch |err| switch (err) {
             error.Loading => continue,
             else => return err,
@@ -34,8 +34,8 @@ pub fn freeRenderModel(self: Self, render_model: openvr.RenderModel) void {
     self.function_table.FreeRenderModel(render_model.extern_ptr);
 }
 
-pub fn loadTexture(self: Self, texture_id: openvr.TextureID) openvr.RenderModelError!*openvr.RenderModel.TextureMap {
-    while (true) : (std.Thread.sleep(10_000_000)) {
+pub fn loadTexture(self: Self, io: std.Io, texture_id: openvr.TextureID) openvr.RenderModelError!*openvr.RenderModel.TextureMap {
+    while (true) : (std.Io.sleep(io, .fromNanoseconds(10_000_000), .awake)) {
         return self.loadTextureAsync(texture_id) catch |err| switch (err) {
             error.Loading => continue,
             else => return err,
