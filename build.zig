@@ -8,9 +8,20 @@ pub fn build(b: *std.Build) !void {
         try checkGitLfsContent(b.graph.io);
     };
 
-    _ = b.addModule("root", .{
+    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
+
+    const module = b.addModule("root", .{
         .root_source_file = b.path("src/openvr.zig"),
+        .target = target,
+        .optimize = optimize,
     });
+
+    // Minimal contained compile check
+    b.step("check", "Check that zopenvr module compiles").dependOn(&b.addObject(.{
+        .name = "zopenvr-check",
+        .root_module = module,
+    }).step);
 }
 
 pub fn addLibraryPathsTo(zopenvr: *std.Build.Dependency, compile_step: *std.Build.Step.Compile) void {

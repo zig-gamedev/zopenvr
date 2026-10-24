@@ -1,8 +1,16 @@
 const std = @import("std");
 
 comptime {
-    std.testing.refAllDeclsRecursive(@This());
+    std.testing.refAllDecls(@This());
 }
+
+pub const System = @import("system.zig");
+pub const Chaperone = @import("chaperone.zig");
+pub const Compositor = @import("compositor.zig");
+pub const Applications = @import("applications.zig");
+pub const Input = @import("input.zig");
+pub const RenderModels = @import("render_models.zig");
+
 
 const Self = @This();
 
@@ -66,13 +74,6 @@ pub fn input(_: Self) InitError!Input {
 pub fn renderModels(_: Self) InitError!RenderModels {
     return try RenderModels.init();
 }
-
-pub const System = @import("system.zig");
-pub const Chaperone = @import("chaperone.zig");
-pub const Compositor = @import("compositor.zig");
-pub const Applications = @import("applications.zig");
-pub const Input = @import("input.zig");
-pub const RenderModels = @import("render_models.zig");
 
 pub const InitError = error{
     Unknown,
